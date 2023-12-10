@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Coffee Break Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+    <title>Laravel</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+
+    <script
+        type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <link href="/salemall/client/css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="/salemall/client/css/style.css" rel='stylesheet' type='text/css' />
+    <link href="/salemall/client/css/blue.css" rel='stylesheet' type='text/css' />
+    <script src="/salemall/client/js/jquery.min.js"></script>
+    <!---- start-smoth-scrolling---->
+    <script type="text/javascript" src="/salemall/client/js/move-top.js"></script>
+    <script type="text/javascript" src="/salemall/client/js/easing.js"></script>
+    <script type="text/javascript" src="/salemall/client/js/path.js"></script>
+    <script type="text/javascript">
+        fetch("/salemall/client/views/layouts/header.html")
+            .then(response => {
+                return response.text()
+            })
+            .then(data => {
+                $('.header-block').html(data);
+            });
+    </script>
+</head>
+<script>
+    var products = [];
+    $(document).ready(function () {
+        
+
+        var token = localStorage.getItem('accessToken');
+        var myParam = location.search;
+        const params = new URLSearchParams(myParam);
+        var page = (params.get("page")) ? parseInt(params.get("page")) : 1;
+        var search = (params.get("search")) ? params.get("search") : "";
+
+        if (search) {
+            $("#blog").html(` `);
+            $("#list-title").html(`Kết quả tìm kiếm cho: ${search}`)
+        }
+        var form = document.getElementById("search-form");
+        var searchValue = document.getElementById("search-value");
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            window.open(PATH + "views/manager.html?search=" + searchValue.value, "_self");
+        });
+
+        $("#details-block").append(`
+        <tr>
+                    <th>STT</th>
+                    <th>Hình ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Chi tiết sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Thao tác</th>
+                </tr>`)
+        $.ajax({
+            url: ROOT + `api/product?page=${page}&search=${search}`,
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "Authorization": 'Bearer ' + token,
+            },
+            async: false
+        })
+            .done(function (data) {
+                products = data.data;
+                var paginate = '';
+                if (data.links.prev) {
+                    var prev = page - 1;
+                    var createParam = 'page=' + prev;
+                    if (search) {
+                        createParam += '&search=' + search;
+                    }
+                    paginate += `<a href="${PATH}views/manager.html?${createParam}"><</a>`;
+                }
+                paginate += `<button style="margin:10px">${page}</button>`;
+                if (data.links.next) {
+                    var next = page + 1;
+                    var createParam = 'page=' + next;
+                    if (search) {
+                        createParam += '&search=' + search;
+                    }
+                    paginate += `<a href="${PATH}views/manager.html?${createParam}">></a>`;
+                }
+                $("#paginate").html(paginate);
+                if (data.data) {
+                    var productList = '';
+                    var count = (page - 1) * 8;
+
+                    data.data.forEach(element => {
+
+                        count++;
+                        $("#details-block").append(`
+                        <tr>
+                            <td>${count}</td>
+                            <td><img src="${element.image}" style="max-width:180px" /></td>
+                            <td>${element.name}</td>
+                            <td>${element.desc}</td>
+                            <td>${element.price}</td>
+                            <td>
+                                <button onclick="editProduct(${element.id})" class="btn btn-primary">Sửa</button><br><br>
+                                <button onclick="editProduct(${element.id})" class="btn btn-danger">Xóa</button>
+                                
+                            </td>
+                        </tr>
+				`);
+                    });
+                }
+
+            })
+    });
+    function createProduct(){
+        
+        $('.model-content').html(`
+        <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Thêm sản phẩm</h2>
+            </div>
+            <div class="modal-body">
+                <form class="formInput">
+                    <label for="Pname">Tên sản phẩm</label><br>
+                    <input type="text" id="Pname" name="Pname"><br><br>
+                    <label for="Pimage">Hình ảnh</label><br><br>
+                    <input type='file' onchange="readURL(this);" accept="image/*" /> <br>
+                    <img id="Pimage" src="http://placehold.it/180" style="max-width:180px" alt="your image" /> <br><br>
+                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
+                    <input type="text" id="Pdesc" name="Pdesc"><br><br>
+                    <label for="Pprice">Giá</label><br>
+                    <input type="text" id="Pprice" name="Pprice"><br><br>
+                    <div style="text-align: right;"><button class="btn btn-primary">Lưu</button></div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        `)
+        //Modal
+        var modal = document.getElementById("myModal");
+         var btn = document.getElementById("myBtn");
+         var span = document.getElementsByClassName("close")[0];
+        // btn.onclick = function () {
+        //     modal.style.display = "block";
+        // }
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        //endModal
+    }
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#Pimage')
+                    .attr('src', e.target.result);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function editProduct(id) {
+        
+        var item = products.find(item => item.id === id);
+        console.log(item.name);
+        console.log(item);
+        $('model-content').html(`
+        <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Thêm sản phẩm</h2>
+            </div>
+            <div class="modal-body">
+                <form class="formInput">
+                    <label for="Pname">Tên sản phẩm ${item.name}</label><br>
+                    <input type="text" id="Pname" name="Pname" value="${item.name}"><br><br>
+                    <label for="Pimage">Hình ảnh</label><br><br>
+                    <input type='file' onchange="readURL(this);" accept="image/*" /> <br>
+                    <img id="Pimage" src="${item.image}" style="max-width:180px" alt="your image" /> <br><br>
+                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
+                    <input type="text" id="Pdesc" name="Pdesc" value="${item.desc}"><br><br>
+                    <label for="Pprice">Giá</label><br>
+                    <input type="text" id="Pprice" name="Pprice" value="${item.price}><br><br>
+                    <div style="text-align: right;"><button class="btn btn-primary">Lưu</button></div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+        </div>`)
+
+        //Modal
+        var modal = document.getElementById("myModal");
+         var btn = document.getElementById("myBtn");
+         var span = document.getElementsByClassName("close")[0];
+        // btn.onclick = function () {
+            modal.style.display = "block";
+        // }
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        //endModal
+    }
+
+</script>
+
+<script>
+
+</script>
+
+<body>
+    <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Thêm sản phẩm</h2>
+            </div>
+            <div class="modal-body">
+                <form class="formInput">
+                    <label for="Pname">Tên sản phẩm</label><br>
+                    <input type="text" id="Pname" name="Pname"><br><br>
+                    <label for="Pimage">Hình ảnh</label><br><br>
+                    <input type='file' onchange="readURL(this);" accept="image/*" /> <br>
+                    <img id="Pimage" src="http://placehold.it/180" style="max-width:180px" alt="your image" /> <br><br>
+                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
+                    <input type="text" id="Pdesc" name="Pdesc"><br><br>
+                    <label for="Pprice">Giá</label><br>
+                    <input type="text" id="Pprice" name="Pprice"><br><br>
+                    <div style="text-align: right;"><button class="btn btn-primary">Lưu</button></div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
+    <div class="header-block"></div>
+    <div class="header">
+        <div class="container">
+            <div class="head">
+                <div class="navigation">
+                    <span class="menu"></span>
+                    <ul class="navig">
+                        <li><a href="">Trang chủ</a></li>
+                    </ul>
+                </div>
+                <div class="header-right">
+                    <form class="search-bar" id="search-form">
+                        <input type="text" type="submit" id="search-value" value="Tìm kiếm" onfocus="this.value = '';"
+                            onblur="if (this.value == '') {this.value = '';}">
+                    </form>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+
+    </div>
+    
+    <div class="single">
+        <div class="container">
+            <h2 style="font-weight: bold;">Chi tiết sản phẩm</h2>
+            <div style="text-align: right;"><button id="myBtn" class="btn btn-success" onclick="createProduct()">Tạo mới</button></div>
+            <br>
+
+            <table>
+
+                <div class="row" id="details-block">
+
+
+                </div>
+
+            </table>
+
+        </div>
+        <div id="paginate" style="text-align: center;"></div>
+    </div>
+
+
+</body>
+
+</html>

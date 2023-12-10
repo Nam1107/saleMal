@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="keywords" content="Coffee Break Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+	<title>Laravel</title>
+
+	<!-- Fonts -->
+	<link rel="preconnect" href="https://fonts.bunny.net">
+	<link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
+	<!-- Styles -->
+
+	<script
+		type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+	<link href="/salemall/client/css/bootstrap.css" rel='stylesheet' type='text/css' />
+	<link href="/salemall/client/css/style.css" rel='stylesheet' type='text/css' />
+	<link href="/salemall/client/css/blue.css" rel='stylesheet' type='text/css' />
+	<script src="/salemall/client/js/jquery.min.js"></script>
+	<!---- start-smoth-scrolling---->
+	<script type="text/javascript" src="/salemall/client/js/move-top.js"></script>
+	<script type="text/javascript" src="/salemall/client/js/easing.js"></script>
+	<script type="text/javascript" src="/salemall/client/js/path.js"></script>
+	<script type="text/javascript">
+		fetch("/salemall/client/views/layouts/header.html")
+			.then(response => {
+				return response.text()
+			})
+			.then(data => {
+				$('.header-block').html(data);
+			});
+
+
+
+
+	</script>
+</head>
+<script>
+	$(document).ready(function () {
+		var token = localStorage.getItem('accessToken');
+		var myParam = location.search;
+		const params = new URLSearchParams(myParam);
+		var page = (params.get("page")) ? parseInt(params.get("page")) : 1;
+		var search = (params.get("search")) ? params.get("search") : "";
+
+		if (search) {
+			$("#blog").html(` `);
+			$("#list-title").html(`Kết quả tìm kiếm cho: ${search}`)
+		}
+		$.ajax({
+			url: ROOT + `api/product?page=${page}&search=${search}`,
+			type: 'GET',
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				"Authorization": 'Bearer ' + token,
+			},
+			async: false
+		})
+			.done(function (data) {
+				var paginate = '';
+				if (data.links.prev) {
+					var prev = page - 1;
+					var createParam = 'page=' + prev;
+					if (search) {
+						createParam += '&search=' + search;
+					}
+					paginate += `<a href="${PATH}views/index.html?${createParam}"><</a>`;
+				}
+				paginate += `<button style="margin:10px">${page}</button>`;
+				if (data.links.next) {
+					var next = page + 1;
+					var createParam = 'page=' + next;
+					if (search) {
+						createParam += '&search=' + search;
+					}
+					paginate += `<a href="${PATH}views/index.html?${createParam}">></a>`;
+				}
+				$("#paginate").html(paginate);
+				// 
+				if (data.data) {
+					var productList = '';
+					data.data.forEach(element => {
+						var priceCheck = 0;
+						if (element.price) {
+							priceCheck = element.price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+						}
+						$("#list-product").append(`
+						<div class="col-md-6 abt-left" style="padding-bottom:10px">
+							<a href="${PATH}views/details.html?id=${element.id}"><img src="${element.image}" alt="" /></a>
+							<h3 class=" wrapper-title" style="font-weight: bold;"><a href="${PATH}views/details.html?id=${element.id}">${element.name}</a></h3>
+							<h4 style="font-weight: bold;color: brown;">${getPrice(priceCheck)}</h4>
+							<div class="wrapper">
+							<p>${element.desc}</p>
+							</div>
+							<div class="about-btn" style="text-align-last: right;">
+								<a href="${PATH}views/details.html?id=${element.id}">Chi tiết</a>
+							</div>
+							<br>
+						</div>
+				`);
+					});
+				}
+
+			})
+		var form = document.getElementById("search-form");
+		var searchValue = document.getElementById("search-value");
+		form.addEventListener("submit", function (e) {
+			e.preventDefault();
+			window.open(PATH + "views/index.html?search=" + searchValue.value, "_self");
+		});
+	});
+
+
+	function getPrice(price) {
+		var priceVar = (price != false) ? price : "Liên hệ";
+		return priceVar;
+	}
+
+</script>
+
+<body>
+	<div class="header-block"></div>
+	<!--start-header-->
+	<div class="header">
+		<div class="container">
+			<div class="head">
+				<div class="navigation">
+					<span class="menu"></span>
+					<ul class="navig">
+						<li><a href="">Trang chủ</a></li>
+					</ul>
+				</div>
+				<div class="header-right">
+					<form class="search-bar" id="search-form">
+						<input type="text" type="submit" id="search-value" value="Tìm kiếm" onfocus="this.value = '';"
+							onblur="if (this.value == '') {this.value = '';}">
+					</form>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+
+		</div>
+
+	</div>
+	<div class="about">
+		<div class="container">
+			<div class="about-main">
+				<div class="col-md-8 about-left">
+					<div id="blog">
+						<div class="about-one">
+							<p>Blog Nhịp Sống Khỏe</p>
+							<h3>Thực phẩm hữu cơ (Organic) - “gương mặt vàng trong làng” chăm sóc sức khỏe</h3>
+						</div>
+						<div class="about-two">
+							<a href=""><img
+									src="https://www.prudential.com.vn/export/sites/prudential-vn/vi/.thu-vien/hinh-anh/pulse-nhip-song-khoe/song-khoe/2020/suc-khoe-the-chat/bai-viet-ban-co-biet-thuc-pham-sach-va-thuc-pham-organic-la-hai-loai-khac-nhau-01.png"
+									alt="" /></a>
+							<p>Đăng bởi <a href="#">Traan Nam</a> 09/12/2023 <a href="#">Bình luận (2)</a></p>
+
+							<p>Do được nuôi trồng một cách tự nhiên, các loại thực phẩm Organic không cần dùng thuốc trừ
+								sâu,
+								hoá chất, giúp đất và nước không bị ô nhiễm, làm giảm ô nhiễm môi trường, kiểm soát xói
+								mòn
+								đất
+								cũng như tăng khả năng sinh sản của sinh vật có lợi cho môi trường, tiêu tốn ít năng
+								lượng.
+							</p>
+							<p>Đồng thời, nhờ vào quá trình trồng tự nhiên nên mùi, hương thơm và thành phần dinh dưỡng
+								trong
+								thực phẩm hữu cơ vẫn được duy trì với tỷ lệ cao. Theo các chuyên gia, thực phẩm organic
+								có
+								hàm
+								lượng dinh dưỡng cao hơn 15% so với thực phẩm thông thường. Một số nghiên cứu khoa học
+								cũng
+								chỉ
+								ra rằng hoa quả và rau hữu cơ chứa chất chống oxy hoá nhiều hơn 40% so với các sản phẩm
+								không
+								hữu cơ. Do vậy, các loại thực phẩm này có hiệu quả trong việc giảm nguy cơ bệnh tim, ung
+								thư,
+								đường huyết cao. Tuy nhiên, do không chứa chất bảo quản nên loại thực phẩm này không để
+								được
+								quá
+								lâu và cần tiêu thụ càng nhanh càng tốt.</p>
+							<div class="about-btn">
+								<a href="#">Đọc thêm</a>
+							</div>
+						</div>
+					</div>
+
+					<div class="about-tre">
+						<div class="a-1">
+
+							<h2 id="list-title" style="font-weight: bold;color: brown;">Danh sách thực phẩm</h2>
+
+							<br>
+							<div id="list-product">
+
+							</div>
+
+
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4 about-right heading">
+					<div class="abt-1">
+						<h3>Bài viết nổi bật</h3>
+						<div class="abt-one">
+							<img src="http://file.freshfoods.vn/global/z4470399861689e035d4fc4eff57a8493800c4a707fe5c.jpg"
+								alt="" width="300px" />
+							<h4>STEAK OUSHII BEEF PHÙ HỢP VỚI MỌI LỨA TUỔI</h4>
+							<p>Điều khiến bạn hài lòng khi thưởng thức một món ăn ngon đó có phải là độ mềm khi nhai kết
+								hợp
+								cùng hương vị tinh tế như "đánh thức mọi giác quan" và hậu vị lưu luyến không lẫn vào
+								đâu
+								được? Nếu bạn đang tìm kiếm trải nghiệm ẩm thực như vậy, thì Steak Oushii Beef chính là
+								sự
+								lựa chọn không thể bỏ qua. Hãy để chúng tôi dẫn lối bạn vào hành trình của hương vị tinh
+								tế,
+								nơi mỗi lát thịt mềm mại đều đem đến một trải nghiệm ẩm thực đẳng cấp.</p>
+							<div class="a-btn">
+								<a href="#">Đọc thêm</a>
+							</div>
+						</div>
+					</div>
+					<div class="abt-2">
+						<h3>Có thể bạn sẽ thích</h3>
+						<div class="might-grid">
+							<div class="grid-might">
+								<a href="#"><img
+										src="https://thucphamsach.vn/wp-content/uploads/2021/07/cach-lam-ca-hoi-nuong-pho-mai-664x374.jpg"
+										class="img-responsive" alt=""> </a>
+							</div>
+							<div class="might-top">
+								<h4><a href="#">Cách làm cá hồi nướng phô mai thơm ngon béo ngậy</a></h4>
+								<p>Cá hồi nướng phô mai thơm ngon, béo ngậy là món ăn có sự kết hợp giữa vị thịt tươi
+									của cá
+									hồi với vị béo của phô mai. Món ăn dinh dưỡng này vô cùng đơn giản.</p>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="might-grid">
+							<div class="grid-might">
+								<a href="#"><img
+										src="https://thucphamsach.vn/wp-content/uploads/2021/07/cach-chon-ca-hoi-song-290x180-c-default.jpg"
+										class="img-responsive" alt=""> </a>
+							</div>
+							<div class="might-top">
+								<h4><a href="#">Bạn biết gì về cá hồi sống? Ăn cá hồi sống có tốt không?</a></h4>
+								<p> Bạn biết gì về cá hồi sống? Ăn cá hồi sống có tốt không?</p>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+						<div class="might-grid">
+							<div class="grid-might">
+								<a href="#"><img
+										src="https://thucphamsach.vn/wp-content/uploads/2021/07/ca-hoi-ap-chao-sot-tieu-den-290x180-c-default.jpg"
+										class="img-responsive" alt=""> </a>
+							</div>
+							<div class="might-top">
+								<h4><a href="#">Hướng dẫn làm cá hồi áp chảo sốt tiêu đen</a></h4>
+								<p> Cá hồi được biết đến là thực phẩm dinh dưỡng và giàu protein. Chính vì điều đó, cá
+									hồi
+									trở thành món ăn được sử dụng phổ biến và dần trở thành món ăn được yêu thích của
+									nhiều
+									người</p>
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+
+
+				</div>
+				<div class="clearfix"></div>
+				<div id="paginate" style="text-align-last: right;">
+
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+
+</html>

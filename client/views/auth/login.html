@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Login</title>
+  <link rel="preconnect" href="https://fonts.bunny.net">
+  <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
+  <script
+    type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+  <link href="/salemall/client/css/bootstrap.css" rel='stylesheet' type='text/css' />
+  <link href="/salemall/client/css/style.css" rel='stylesheet' type='text/css' />
+  <link href="/salemall/client/css/blue.css" rel='stylesheet' type='text/css' />
+  <script src="/salemall/client/js/jquery.min.js"></script>
+  <script src="/salemall/client/js/jquery-3.6.0.min.js"></script>
+  <script src="/salemall/client/js/path.js"></script>
+  <!---- start-smoth-scrolling---->
+  <script type="text/javascript" src="/salemall/client/js/move-top.js"></script>
+  <script type="text/javascript" src="/salemall/client/js/easing.js"></script>
+</head>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    var form = document.getElementById("form");
+    var email = document.getElementById("Email");
+    var pass = document.getElementById("Password");
+    var button = document.getElementById("btn");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      // $.post(ROOT + "api/auth/login",
+      //   {
+      //     data:{
+      //       'email': email.value,
+      //       'password': pass.value,
+      //     }
+
+      //   },{headers: {
+      //         'Accept': 'application/json',
+      //         'Content-Type': 'application/json',
+      //       },}
+
+      // )
+      $.ajax({
+        url: ROOT + "api/auth/login",
+        type: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({
+          'email': email.value,
+          'password': pass.value
+        }),
+        async: false
+      })
+        .done(function (data) {
+          localStorage.setItem('accessToken', data.access_token);
+          localStorage.setItem('refreshToken', data.access_token);
+          window.open(PATH + "views/index.html", "_self");
+        }).fail(async function (data) {
+          var obj = JSON.parse(data['responseText']);
+          console.log(obj)
+          var emailText = '';
+          var passwordText = '';
+          if (obj.errors.email) {
+            obj.errors.email.forEach(element => {
+              emailText += element + "<br>";
+            });
+            var elm1 = $(`
+          <div>${emailText}</div>
+          `);
+            $('.email-error').prepend(elm1);
+            setTimeout(function () {
+              elm1.fadeOut(1000);
+            }, 2500);
+          }
+
+          if (obj.errors.password) {
+            obj.errors.password.forEach(element => {
+              passwordText += element + "<br>";
+            });
+            var elm2 = $(`
+          <div>${passwordText}</div>
+          `);
+
+            $('.password-error').prepend(elm2);
+            setTimeout(function () {
+              elm2.fadeOut(1000);
+            }, 2500);
+          }
+        });
+    })
+  })
+</script>
+
+<body>
+
+  <div class="full-height">
+    <div class="item">
+
+      <div class="text-center" id="logo">
+        <a class="text-title" href="/salemall/client/views/index.html"
+          style="font-size: 40px;background: none;border: none;">SALEMALL</a>
+      </div>
+
+      <div class="tag-title text-center" style="background-color: wheat;">
+        <span style="font-size:20px;">Log in page</span>
+      </div>
+      <div class="tag-title" style="font-size: 14px;">
+        <form method="POST" id="form">
+          <div class="mb-3">
+            <label class="form-label" style="padding:10px">User Email</label>
+            <input type="email" class="form-control" id="Email" name="Email" value="" placeholder="User Email" />
+          </div>
+          <div class="email-error" style="text-align: left;
+          padding: 10px 0 0 10px;"></div>
+          <div class="mb-3">
+            <label for="exampleInputPassword1" class="form-label" style="padding:10px">Password</label>
+            <input type="password" class="form-control" id="Password" name="Password" value="" placeholder="Password" />
+          </div>
+          <div class="password-error" style="text-align: left;
+          padding: 10px 0 0 10px;"></div>
+          <div style="padding-top:10px"><a href="/salemall/client/views/auth/signup.html">Create new user</a></div>
+
+          <br>
+          <button type="submit" name="create-user" class="a-btn">Login</button>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</body>
+<footer class="text-center text-lg-start">
+
+</footer>
+
+</html>

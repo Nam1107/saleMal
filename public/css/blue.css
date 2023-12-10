@@ -1,0 +1,162 @@
+.color{
+    color : #190608,
+            /* background-image: linear-gradient(-45deg, #190608, #190608); */
+}
+*{
+  /* font-size: 14px; */
+  font-family:Helvetica, Arial, sans-serif!important;
+}
+*::-webkit-scrollbar{
+    width: 7.5px;
+    height: 7.5px;
+  }
+  *::-webkit-scrollbar-track{
+    display: none;
+  }
+  *::-webkit-scrollbar-thumb{
+    background-image: linear-gradient(0deg, #582a2f, #190608);
+    border-radius: 5px;
+  }
+  /* - - - - - - - */
+  .center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .btn{
+    transition: all 0.5s ease!important;
+  }
+
+.content{
+    min-width: 375px;
+    padding: 15px;
+    max-width: 1440px;
+    margin: auto;
+  }
+  .row{
+    margin: 0;
+    padding: 0;
+  }
+  body{
+    background-color: whitesmoke;
+    width: 100%;
+    overflow: overlay;
+    
+  }
+  .text-title{
+    font-size: 15px;
+    font-weight: bold;
+    color: #190608;
+  }
+  .tag-title{
+    color: #190608;
+    background-color: white;
+    font-size: 20px;
+    font-weight: bold;
+    padding: 10px;
+    margin: 10px auto;
+    border-radius: 5px;
+    border: 5px;
+    box-shadow: 0 0 10px 1px rgb(115 103 240 / 70%);;
+  }
+  html, body {
+    height: 100%;
+  }
+
+  a{
+    color: #999;
+  }
+
+  .header-nav{
+    box-shadow: 0px 1px 9px 1px rgba(0, 0, 0, 0.11);
+  }
+
+  .header-nav ul {  
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: wheat;
+}
+.header-nav li {  
+float: left;  
+}
+.header-nav li:last-child {
+border-right: none;
+}
+.header-nav li a {
+display: block;  
+color: #190608;  
+text-align: center;  
+padding: 14px 16px;  
+text-decoration: none;
+}
+.header-nav li span {
+    display: block;  
+    color: #190608;  
+    text-align: center;  
+    padding: 14px 16px;  
+    text-decoration: none;
+    font-weight: bolder;
+    }
+.header-nav  li a:hover:not(.active) {  
+color: white;  
+background-color: #190608;  
+font-weight: bold;
+}
+.header-nav .active {
+color: white;  
+font-weight: bold;
+}
+  
+
+  .a-btn{
+    margin-top: 0%;
+    margin-bottom: 3%;
+    padding: 10px;
+    min-width: 100px;
+
+  }
+  
+  .full-height {
+    height: 100%;
+    display: flex;
+    text-align: center;
+  }
+  .item {
+    align-items: center;
+    justify-content: center;
+    min-width: 600px;
+    padding: 15px;
+    max-width: 1440px;
+    margin: auto;
+  }
+  .wrapper {
+    
+  }
+  
+  .wrapper p {
+    overflow: hidden;
+    max-width: 1000px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+  }
+@keyframes fade {
+    from {opacity: .4} 
+    to {opacity: 1}
+  }
+  
+    
+    @media (min-width: 300px) {
+      .cards { grid-template-columns: repeat(2, 0.5fr); }
+    }
+    @media (min-width: 600px) {
+      .cards { grid-template-columns: repeat(3, 0.5fr); }
+    }
+    @media (min-width: 800px) {
+      .cards { grid-template-columns: repeat(4, 0.5fr); }
+    }
+    @media (min-width: 1200px) {
+      .cards { grid-template-columns: repeat(5, 0.5fr); }
+    }

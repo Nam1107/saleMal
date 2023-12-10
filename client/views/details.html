@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content="Coffee Break Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, 
+Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+    <title>Laravel</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
+    <!-- Styles -->
+
+    <script
+        type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+    <link href="/salemall/client/css/bootstrap.css" rel='stylesheet' type='text/css' />
+    <link href="/salemall/client/css/style.css" rel='stylesheet' type='text/css' />
+    <link href="/salemall/client/css/blue.css" rel='stylesheet' type='text/css' />
+    <script src="/salemall/client/js/jquery.min.js"></script>
+    <!---- start-smoth-scrolling---->
+    <script type="text/javascript" src="/salemall/client/js/move-top.js"></script>
+    <script type="text/javascript" src="/salemall/client/js/easing.js"></script>
+    <script type="text/javascript" src="/salemall/client/js/path.js"></script>
+    <script type="text/javascript">
+        fetch("/salemall/client/views/layouts/header.html")
+            .then(response => {
+                return response.text()
+            })
+            .then(data => {
+                $('.header-block').html(data);
+            });
+
+
+
+
+    </script>
+    <script>
+        $(document).ready(function () {
+            var token = localStorage.getItem('accessToken');
+            var myParam = location.search;
+            const params = new URLSearchParams(myParam);
+            var productID = params.get("id");
+            if (!productID) {
+                window.open(PATH + "views/index.html", "_self");
+            }
+            $.ajax({
+                url: ROOT + `api/product/${productID}`,
+                type: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    "Authorization": 'Bearer ' + token,
+                },
+                async: false,
+                success:function (data) {
+                    console.log(data)
+                    var priceCheck = 0;
+                    if (data.data.price) {
+                        priceCheck = data.data.price.toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+                    }
+                    $('#details-block').html(`
+                    <div class="col-md-4 about-left">
+                    <a href="#"><img class="img-responsive"
+                            src="${data.data.image}" alt=" "></a>
+                </div>
+                <div class="col-md-8 about-left">
+                    <h3 style="font-weight: bold;">${data.data.name}</h3>
+                    
+                    <h2 style="font-weight: bold;color: brown;">${getPrice(priceCheck)}</h2>
+                    <div style="background-color: #e0e0e0;height: 1px;width: 100%; margin: 1.67vw auto;"></div>
+                    <h4 style="font-weight:bold">Chi tiết sản phẩm</h4>
+                    <p>${data.data.desc}</p>
+                    <div style="background-color: #e0e0e0;height: 1px;width: 100%; margin: 1.67vw auto;"></div>
+                    <div class="about-btn" style="text-align: right;">
+                        <a href="">Đặt hàng</a>
+                    </div>
+                </div>
+                    `)
+                },
+                error:function (data) {
+
+                }
+            })
+
+            var form = document.getElementById("search-form");
+            var searchValue = document.getElementById("search-value");
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                window.open(PATH + "views/index.html?search="+searchValue.value, "_self");
+            });
+        });
+
+
+        function getPrice(price) {
+            var priceVar = (price != false) ? price : "Liên hệ";
+            return priceVar;
+        }
+    </script>
+</head>
+<script>
+
+</script>
+
+<body>
+    <div class="header-block"></div>
+    <!--start-header-->
+    <div class="header">
+        <div class="container">
+            <div class="head">
+                <div class="navigation">
+                    <span class="menu"></span>
+                    <ul class="navig">
+                        <li><a href="">Trang chủ</a></li>
+                    </ul>
+                </div>
+                <div class="header-right">
+                    <form class="search-bar" id="search-form">
+						<input type="text" type="submit" id="search-value" value="Tìm kiếm" onfocus="this.value = '';"
+							onblur="if (this.value == '') {this.value = '';}">
+					</form>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+
+    </div>
+    <div class="single">
+        <div class="container">
+            <h2 style="font-weight: bold;">Chi tiết sản phẩm</h2>
+            <br>
+            <div class="row" id="details-block">
+                
+
+
+
+            </div>
+
+            <div class="single-top row">
+                <div class="comments heading">
+                    <h3>Comments</h3>
+                    <div class="media">
+                        <div class="media-body">
+                            <h4 class="media-heading"> Richard Spark</h4>
+                            <p>On the other hand, we denounce with righteous indignation and dislike men who are so
+                                beguiled
+                                and demoralized by the charms of pleasure of the moment, so blinded by desire, that they
+                                cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs .
+                            </p>
+                        </div>
+                        <div class="media-right">
+                            <a href="#">
+                                <img src="http://localhost/salemall/client/images/si.png" alt=""> </a>
+                        </div>
+                    </div>
+                    <div class="media">
+                        <div class="media-left">
+                            <a href="#">
+                                <img src="http://localhost/salemall/client/images/si.png" alt="">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">Joseph Goh</h4>
+                            <p>On the other hand, we denounce with righteous indignation and dislike men who are so
+                                beguiled
+                                and demoralized by the charms of pleasure of the moment, so blinded by desire, that they
+                                cannot foresee the pain and trouble that are bound to ensue; and equal blame belongs .
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="comment-bottom heading">
+                    <h3>Leave a Comment</h3>
+                    <form>
+                        <input type="text" value="Name" onfocus="this.value='';"
+                            onblur="if (this.value == '') {this.value ='Name';}">
+                        <input type="text" value="Email" onfocus="this.value='';"
+                            onblur="if (this.value == '') {this.value ='Email';}">
+                        <input type="text" value="Subject" onfocus="this.value='';"
+                            onblur="if (this.value == '') {this.value ='Subject';}">
+                        <textarea cols="77" rows="6" value=" " onfocus="this.value='';"
+                            onblur="if (this.value == '') {this.value = 'Message';}">Message</textarea>
+                        <input type="submit" value="Send">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
