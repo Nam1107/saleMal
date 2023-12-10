@@ -25,13 +25,15 @@
 <script type="text/javascript">
   $(document).ready(function () {
 
-    const user = new FormData();
+    
+    
+    var form = document.getElementById("form");
+    form.addEventListener("submit", function (e) {
+      const user = new FormData();
     user.append('name', document.getElementById("name").value);
     user.append('email', document.getElementById("email").value);
     user.append('password', document.getElementById("password").value);
     user.append('c_password', document.getElementById("c_password").value);
-    var form = document.getElementById("form");
-    form.addEventListener("submit", function (e) {
       e.preventDefault();
       $.ajax({
         url: ROOT + "api/auth/register",
@@ -42,11 +44,13 @@
         async: false
       })
         .done(function (data) {
-          localStorage.setItem('accessToken', data.access_token);
-          localStorage.setItem('refreshToken', data.access_token);
-          window.open(PATH + "views/index.html", "_self");
-        }).fail(async function (data) {
+          alert('Tạo tài khoản thành công. Vui lòng đăng nhập');
+          // localStorage.setItem('accessToken', data.access_token);
+          // localStorage.setItem('refreshToken', data.access_token);
+          window.open(PATH + "views/auth/login.html", "_self");
+        }).fail(function (data) {
           var obj = JSON.parse(data['responseText']);
+          console.log(obj);
           if (obj.errors) {
             showError(obj);
           }
@@ -118,23 +122,23 @@
           <div class="mb-3">
             <label class="form-label" style="padding:10px">User Name</label>
             <input type="text" class="form-control" name="UserName" id="name" value="" placeholder="User Name" />
-            <div id="Pname-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
+            <div id="Pname-error" style="text-align: left;padding: 10px 0 0 10px;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="mb-3">
             <label class="form-label" style="padding:10px">User Email</label>
             <input type="email" class="form-control" name="Email" id="email" value="" placeholder="User Email" />
-            <div id="Pemail-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
+            <div id="Pemail-error" style="text-align: left;padding: 10px 0 0 10px;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label" style="padding:10px">Password</label>
             <input type="password" class="form-control" name="Password" id="password" value="" placeholder="Password" />
-            <div id="Ppassword-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
+            <div id="Ppassword-error" style="text-align: left;padding: 10px 0 0 10px;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label" style="padding:10px">Password Confirm</label>
             <input type="password" class="form-control" name="c_password" id="c_password" value=""
               placeholder="Repeat your password" />
-            <div id="Pcpassword-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
+            <div id="Pcpassword-error" style="text-align: left;padding: 10px 0 0 10px;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="atb-2" style="padding:10px">
             <a style="font-style: italic;" href="/salemall/client/views/auth/login.html">Back to Login page</a>
