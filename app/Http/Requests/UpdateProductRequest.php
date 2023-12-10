@@ -4,6 +4,8 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\File;
 class UpdateProductRequest extends FormRequest
 {
     /**
@@ -25,7 +27,10 @@ class UpdateProductRequest extends FormRequest
         if($method == 'PUT'){
             return [
                 'name' => ['required'],
-                'image' => ['required'],
+                'image' => ['required', File::image()
+                                    ->min(1024)
+                                    ->max(12 * 1024)
+                                    ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500))],
                 'price' => ['required','numeric'],
                 'desc' => ['required'],
                 'category' => ['required']
@@ -33,7 +38,8 @@ class UpdateProductRequest extends FormRequest
         }else{
             return [
                 'name' => ['sometimes','required'],
-                'image' => ['sometimes','required'],
+                'image' => ['sometimes','required', File::image()
+                                    ->dimensions(Rule::dimensions()->maxWidth(2000)->maxHeight(1500))],
                 'price' => ['sometimes','required','numeric'],
                 'desc' => ['sometimes','required'],
                 'category' => ['sometimes','required']

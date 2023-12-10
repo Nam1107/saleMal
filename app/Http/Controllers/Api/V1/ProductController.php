@@ -60,8 +60,14 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
-        $product = Product::create($request->all());
+        $newProduct = $request->except('image');
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('/images');
+            $path = "/salemall/storage/app/".$path;
+            
+            $newProduct['image'] = $path;
+        }
+        $product = Product::create($newProduct);
         return new ProductResource($product);
     }
 
@@ -88,6 +94,7 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
+        
         $product->update($request->all());
         return new ProductResource($product);
     }
@@ -98,5 +105,13 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function uploadImage(Request $request){
+        if ($request->hasFile('photo')) {
+            // $path = Storage::disk('local')->put($request->file('photo')->getClientOriginalName(),$request->file('photo')->get());
+            $path = $request->file('photo')->store('/images');
+            return $path;
+        }
     }
 }

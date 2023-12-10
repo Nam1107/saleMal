@@ -1,0 +1,100 @@
+<header>
+
+    </head>
+
+    <body>
+        <div class="header-nav">
+
+        </div>
+
+</header>
+
+
+<script>
+    $(document).ready(function () {
+        var token = localStorage.getItem('accessToken');
+        if (!token) {
+            window.open(PATH + "views/index.html", "_self");
+        }
+        getUser();
+    })
+    function refreshToken() {
+        var token = localStorage.getItem('refreshToken');
+        if (!token) {
+            window.open(PATH + "views/index.html", "_self");
+        }
+        $.ajax({
+            url: ROOT + "api/auth/refresh",
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "Authorization": 'Bearer ' + token,
+            },
+            async: false
+        })
+            .done(function (data) {
+                localStorage.setItem('accessToken', data.access_token);
+                getUser()
+            }).fail(function (data) {
+                window.open(PATH + "views/index.html", "_self");
+            })
+    }
+    function logout() {
+        var token = localStorage.getItem('refreshToken');
+        $.ajax({
+            url: ROOT + "api/auth/logout",
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "Authorization": 'Bearer ' + token,
+            },
+            data: JSON.stringify({
+                "refreshToken": token
+            }),
+            async: false
+        })
+            .done(function (data) {
+                localStorage.removeItem("accessToken");
+                localStorage.removeItem("refreshToken");
+                window.open(PATH + "views/index.html", "_self");
+            }).fail(function (data) {
+                window.open(PATH + "views/index.html", "_self");
+            })
+    }
+    function getUser() {
+        var token = localStorage.getItem('accessToken');
+        $.ajax({
+            url: ROOT + "api/auth/me",
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "Authorization": 'Bearer ' + token,
+            },
+            async: false
+        })
+            .done(function (data) {
+                $('.header-nav').html(`<ul>
+                <li>
+                    <span>SALEMALL</span>
+
+                </li>
+                <li style="float:right">
+                    <a href="${PATH}views/manager.html">Quản lý</a>
+                </li>
+                <li style="float:right">
+                    <a onclick="logout() " style="cursor: pointer;">Đăng xuất</a>
+                </li>
+                <li style="float:right">
+                    <a >${data.data.name}</a>
+                </li>
+                </ul>`);
+
+            })
+            .fail(function (data) {
+                refreshToken();
+            })
+    }
+</script>

@@ -12,7 +12,7 @@
 
 <script>
   $(document).ready(function () {
-    var token = localStorage.getItem('accessToken');
+    
     $('.header-nav').html(`<ul>
         <li>
           <span>SALEMALL</span>
@@ -26,8 +26,18 @@
           <a href="${PATH}views/auth/login.html"> Đăng nhập</a>
         </li>
         </ul>`);
+    var token = localStorage.getItem('accessToken');
     if (token) {
-      $.ajax({
+      getUser();
+    }
+
+  })
+  function refreshToken(){
+    var token = localStorage.getItem('refreshToken');
+        if (!token) {
+            window.open(PATH + "views/index.html", "_self");
+        }
+    $.ajax({
         url: ROOT + "api/auth/refresh",
         type: 'POST',
         headers: {
@@ -38,14 +48,10 @@
         async: false
       })
         .done(function (data) {
+          localStorage.setItem('accessToken', data.access_token);
           getUser()
-        }).fail(async function (data) {
-          var obj = JSON.parse(data['responseText']);
-          console.log(obj)
         })
-    }
-
-  })
+  }
   function logout() {
     var token = localStorage.getItem('refreshToken');
     $.ajax({
@@ -62,8 +68,8 @@
       async: false
     })
       .done(function (data) {
-        localStorage.setItem('accessToken', false);
-        localStorage.setItem('refreshToken', false);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
         window.location.reload();
       }).fail(async function (data) {
         var obj = JSON.parse(data['responseText']);
@@ -89,7 +95,7 @@
 
         </li>
         <li style="float:right">
-          <a href="">Quản lý</a>
+          <a href="${PATH}views/manager.html">Quản lý</a>
         </li>
         <li style="float:right">
           <a onclick="logout() " style="cursor: pointer;">Đăng xuất</a>
@@ -100,8 +106,7 @@
         </ul>`);
 
       }).fail(async function (data) {
-        var obj = JSON.parse(data['responseText']);
-        console.log(obj)
+        refreshToken();
 
       })
   }

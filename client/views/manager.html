@@ -26,7 +26,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script type="text/javascript" src="/salemall/client/js/easing.js"></script>
     <script type="text/javascript" src="/salemall/client/js/path.js"></script>
     <script type="text/javascript">
-        fetch("/salemall/client/views/layouts/header.html")
+        fetch("/salemall/client/views/layouts/headerCMS.html")
             .then(response => {
                 return response.text()
             })
@@ -38,7 +38,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 <script>
     var products = [];
     $(document).ready(function () {
-        
+
 
         var token = localStorage.getItem('accessToken');
         var myParam = location.search;
@@ -112,8 +112,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <td>${element.desc}</td>
                             <td>${element.price}</td>
                             <td>
-                                <button onclick="editProduct(${element.id})" class="btn btn-primary">Sửa</button><br><br>
-                                <button onclick="editProduct(${element.id})" class="btn btn-danger">Xóa</button>
+                                <button onclick="editModal(${element.id})" class="btn btn-primary">Sửa</button><br><br>
+                                <button onclick="editModal(${element.id})" class="btn btn-danger">Xóa</button>
                                 
                             </td>
                         </tr>
@@ -123,96 +123,22 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 
             })
     });
-    function createProduct(){
-        
-        $('.model-content').html(`
-        <div class="modal-header">
-                <span class="close">&times;</span>
-                <h2>Thêm sản phẩm</h2>
-            </div>
-            <div class="modal-body">
-                <form class="formInput">
-                    <label for="Pname">Tên sản phẩm</label><br>
-                    <input type="text" id="Pname" name="Pname"><br><br>
-                    <label for="Pimage">Hình ảnh</label><br><br>
-                    <input type='file' onchange="readURL(this);" accept="image/*" /> <br>
-                    <img id="Pimage" src="http://placehold.it/180" style="max-width:180px" alt="your image" /> <br><br>
-                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
-                    <input type="text" id="Pdesc" name="Pdesc"><br><br>
-                    <label for="Pprice">Giá</label><br>
-                    <input type="text" id="Pprice" name="Pprice"><br><br>
-                    <div style="text-align: right;"><button class="btn btn-primary">Lưu</button></div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-            </div>
-        `)
-        //Modal
-        var modal = document.getElementById("myModal");
-         var btn = document.getElementById("myBtn");
-         var span = document.getElementsByClassName("close")[0];
-        // btn.onclick = function () {
-        //     modal.style.display = "block";
-        // }
-        span.onclick = function () {
-            modal.style.display = "none";
-        }
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        //endModal
-    }
     function readURL(input) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
 
             reader.onload = function (e) {
-                $('#Pimage')
+                $('#Pimage-show')
                     .attr('src', e.target.result);
             };
 
             reader.readAsDataURL(input.files[0]);
         }
     }
-
-    function editProduct(id) {
-        
-        var item = products.find(item => item.id === id);
-        console.log(item.name);
-        console.log(item);
-        $('model-content').html(`
-        <div class="modal-header">
-                <span class="close">&times;</span>
-                <h2>Thêm sản phẩm</h2>
-            </div>
-            <div class="modal-body">
-                <form class="formInput">
-                    <label for="Pname">Tên sản phẩm ${item.name}</label><br>
-                    <input type="text" id="Pname" name="Pname" value="${item.name}"><br><br>
-                    <label for="Pimage">Hình ảnh</label><br><br>
-                    <input type='file' onchange="readURL(this);" accept="image/*" /> <br>
-                    <img id="Pimage" src="${item.image}" style="max-width:180px" alt="your image" /> <br><br>
-                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
-                    <input type="text" id="Pdesc" name="Pdesc" value="${item.desc}"><br><br>
-                    <label for="Pprice">Giá</label><br>
-                    <input type="text" id="Pprice" name="Pprice" value="${item.price}><br><br>
-                    <div style="text-align: right;"><button class="btn btn-primary">Lưu</button></div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-        </div>`)
-
-        //Modal
+    function openModal() {
         var modal = document.getElementById("myModal");
-         var btn = document.getElementById("myBtn");
-         var span = document.getElementsByClassName("close")[0];
-        // btn.onclick = function () {
-            modal.style.display = "block";
-        // }
+        var span = document.getElementsByClassName("close")[0];
+        modal.style.display = "block";
         span.onclick = function () {
             modal.style.display = "none";
         }
@@ -221,7 +147,118 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 modal.style.display = "none";
             }
         }
-        //endModal
+    }
+    function createProduct() {
+        var token = localStorage.getItem('accessToken');
+        const product = new FormData();
+        product.append('name', document.getElementById("Pname").value);
+        product.append('image', document.getElementById("Pimage").files[0]);
+        product.append('desc', document.getElementById("Pdesc").value);
+        product.append('price', document.getElementById("Pprice").value);
+        $.ajax({
+            url: ROOT + `api/product`,
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            headers: {
+                "Authorization": 'Bearer ' + token,
+            },
+            data: product,
+            async: false
+        })
+            .done(function (data) {
+                alert('Thành công!')
+                window.location.reload();
+            }).fail(function (data) {
+                var obj = JSON.parse(data['responseText']);
+               console.log(obj)        
+            })
+
+    }
+    function updateProduct($id) {
+        let product = {};
+        product.name = document.getElementById("Pname").value;
+        product.image = document.getElementById("Pimage").files[0];
+        product.desc = document.getElementById("Pdesc").value;
+        product.price = document.getElementById("Pprice").value;
+
+        console.log(product);
+    }
+    function createModal() {
+
+        $('#myModal').html(`
+        <div class="modal-content">
+        <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Thêm sản phẩm</h2>
+            </div>
+            <div class="modal-body">
+                <div class="formInput">
+                    <label for="Pname">Tên sản phẩm</label><br>
+                    <input type="text" id="Pname" name="Pname"><br><br>
+                    <div id="Pname-error" style="text-align: left;
+                    padding: 10px 0 0 10px;"></div>
+                    <label for="Pimage">Hình ảnh</label><br><br>
+                    <input type='file' onchange="readURL(this);" accept="image/*" id="Pimage" /> <br>
+                    <div id="Pimage-error" style="text-align: left;
+          padding: 10px 0 0 10px;"></div>
+                    <img id="Pimage-show" src="" style="max-width:180px" alt="your image" /> <br><br>
+                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
+                    <textarea id="Pdesc" name="Pdesc" style="width:100%;height:200px"></textarea><br><br>
+                    <div id="Pdesc-error" style="text-align: left;
+          padding: 10px 0 0 10px;"></div>
+                    <label for="Pprice">Giá</label><br>
+                    <input type="text" id="Pprice" name="Pprice"><br>
+                    <div id="Pprice-error" style="text-align: left;
+          padding: 10px 0 0 10px;"></div>
+                    <br>
+                    
+
+                </div>
+                <div style="text-align: right;"><button class="btn btn-primary" onClick="createProduct()">Lưu</button></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+        `)
+        openModal();
+    }
+
+
+    function editModal(id) {
+
+        var item = products.find(item => item.id === id);
+        var price = 0;
+        if (item.price) {
+            price = item.price;
+        }
+        $('#myModal').html(`
+        <div class="modal-content">
+        <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Sửa sản phẩm</h2>
+            </div>
+            <div class="modal-body">
+                <div class="formInput">
+                    <label for="Pname">Tên sản phẩm</label><br>
+                    <input type="text" id="Pname" name="Pname" value="${item.name}"><br><br>
+                    <label for="Pimage">Hình ảnh</label><br><br>
+                    <input type='file' onchange="readURL(this);" accept="image/*" id="Pimage"/> <br>
+                    <img src="${item.image}" style="max-width:180px" alt="your image" /> <br><br>
+                    
+                    <label for="Pprice">Giá</label><br>
+                    <input type="number" id="Pprice" name="Pprice" value="${price}"><br><br>
+                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
+                    <textarea id="Pdesc" name="Pdesc" style="width:100%;height:200px">${item.desc}</textarea><br><br>
+                    <div style="text-align: right;"><button onclick="updateProduct(${item.id})" class="btn btn-primary">Lưu</button></div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+        </div>
+    </div>`)
+
+        openModal();
     }
 
 </script>
@@ -240,19 +277,19 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <h2>Thêm sản phẩm</h2>
             </div>
             <div class="modal-body">
-                <form class="formInput">
+                <div class="formInput">
                     <label for="Pname">Tên sản phẩm</label><br>
                     <input type="text" id="Pname" name="Pname"><br><br>
                     <label for="Pimage">Hình ảnh</label><br><br>
                     <input type='file' onchange="readURL(this);" accept="image/*" /> <br>
-                    <img id="Pimage" src="http://placehold.it/180" style="max-width:180px" alt="your image" /> <br><br>
+                    <img id="Pimage" src="" style="max-width:180px" alt="your image" /> <br><br>
                     <label for="Pdesc">Chi tiết sản phẩm</label><br>
                     <input type="text" id="Pdesc" name="Pdesc"><br><br>
                     <label for="Pprice">Giá</label><br>
                     <input type="text" id="Pprice" name="Pprice"><br><br>
                     <div style="text-align: right;"><button class="btn btn-primary">Lưu</button></div>
 
-                </form>
+                </div>
             </div>
             <div class="modal-footer">
             </div>
@@ -281,11 +318,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         </div>
 
     </div>
-    
+
     <div class="single">
         <div class="container">
             <h2 style="font-weight: bold;">Chi tiết sản phẩm</h2>
-            <div style="text-align: right;"><button id="myBtn" class="btn btn-success" onclick="createProduct()">Tạo mới</button></div>
+            <div style="text-align: right;"><button id="myBtn" class="btn btn-success" onclick="createModal()">Tạo
+                    mới</button></div>
             <br>
 
             <table>
