@@ -25,7 +25,3 @@ Route::group(['prefix' => 'auth'], function () {
 });
 Route::apiResource('user', UserController::class)->except('edit', 'create');
 Route::apiResource('product', ProductController::class)->except('edit', 'create');
-Route::get('/home', function(){
-    echo    "hello";
-});
-Route::post('/uploadImage', [ProductController::class,'uploadImage']);

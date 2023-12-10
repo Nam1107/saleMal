@@ -94,7 +94,6 @@ class ProductController extends Controller
      */
     public function update(UpdateProductRequest $request, Product $product)
     {
-        
         $product->update($request->all());
         return new ProductResource($product);
     }
@@ -102,16 +101,11 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
         //
+        $product->delete();
+        return response()->json(['message' => 'Successfully delete']);
     }
 
-    public function uploadImage(Request $request){
-        if ($request->hasFile('photo')) {
-            // $path = Storage::disk('local')->put($request->file('photo')->getClientOriginalName(),$request->file('photo')->get());
-            $path = $request->file('photo')->store('/images');
-            return $path;
-        }
-    }
 }

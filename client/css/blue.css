@@ -274,12 +274,6 @@ font-weight: bold;
     background-color: #45a049;
   }
   
-  .formInput div {
-    border-radius: 5px;
-    background-color: #f2f2f2;
-    padding: 20px;
-  }
-  
   /* Add Animation */
   @-webkit-keyframes animatetop {
     from {left:-200px; opacity:0} 

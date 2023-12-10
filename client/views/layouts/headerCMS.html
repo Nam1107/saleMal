@@ -55,13 +55,9 @@
             }),
             async: false
         })
-            .done(function (data) {
-                localStorage.removeItem("accessToken");
-                localStorage.removeItem("refreshToken");
-                window.open(PATH + "views/index.html", "_self");
-            }).fail(function (data) {
-                window.open(PATH + "views/index.html", "_self");
-            })
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        window.open(PATH + "views/index.html", "_self");
     }
     function getUser() {
         var token = localStorage.getItem('accessToken');

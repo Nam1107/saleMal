@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('image',500);
-            $table->string('category');
+            $table->integer('quantity');
             $table->integer('price');
             $table->string('desc');
             $table->timestamp('created_at')->useCurrent();

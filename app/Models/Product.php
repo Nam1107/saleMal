@@ -13,7 +13,7 @@ class Product extends Model
         'image',
         'price',
         'desc',
-        'category',
+        'quantity',
         'created_at',
         'updated_at'
         

@@ -64,6 +64,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     <th>Sản phẩm</th>
                     <th>Chi tiết sản phẩm</th>
                     <th>Giá</th>
+                    <th>SL sản phẩm</th>
                     <th>Thao tác</th>
                 </tr>`)
         $.ajax({
@@ -111,9 +112,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                             <td>${element.name}</td>
                             <td>${element.desc}</td>
                             <td>${element.price}</td>
+                            <td>${element.quantity}</td>
                             <td>
                                 <button onclick="editModal(${element.id})" class="btn btn-primary">Sửa</button><br><br>
-                                <button onclick="editModal(${element.id})" class="btn btn-danger">Xóa</button>
+                                <button onclick="deleteProduct(${element.id})" class="btn btn-danger">Xóa</button>
                                 
                             </td>
                         </tr>
@@ -148,6 +150,36 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
             }
         }
     }
+    function updateProduct(id) {
+        var token = localStorage.getItem('accessToken');
+        const product = new FormData();
+        if(document.getElementById("Pimage").value){
+            product.append('image', document.getElementById("Pimage").files[0]);
+        };
+        product.append('name', document.getElementById("Pname").value);
+        product.append('desc', document.getElementById("Pdesc").value);
+        product.append('price', document.getElementById("Pprice").value);
+        product.append('quantity', document.getElementById("Pquantity").value);
+
+        $.ajax({
+            url: ROOT + `api/product/` + id +"?_method=PATCH",
+            type: 'POST',
+            processData: false,
+            contentType: false,
+            headers: {
+                "Authorization": 'Bearer ' + token,
+            },
+            data: product,
+            async: false
+        })
+            .done(function (data) {
+                alert('Thành công!')
+                window.location.reload();
+            }).fail(function (data) {
+                var obj = JSON.parse(data['responseText']);
+                showError(obj);
+            })
+    }
     function createProduct() {
         var token = localStorage.getItem('accessToken');
         const product = new FormData();
@@ -155,6 +187,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         product.append('image', document.getElementById("Pimage").files[0]);
         product.append('desc', document.getElementById("Pdesc").value);
         product.append('price', document.getElementById("Pprice").value);
+        product.append('quantity', document.getElementById("Pquantity").value);
         $.ajax({
             url: ROOT + `api/product`,
             type: 'POST',
@@ -171,19 +204,99 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 window.location.reload();
             }).fail(function (data) {
                 var obj = JSON.parse(data['responseText']);
-               console.log(obj)        
+                if(obj.error){
+                    showError(obj);
+                    return
+                }
+                alert('Có lỗi xảy ra vui lòng thử lại')
+                console.log(obj)
+                
             })
 
     }
-    function updateProduct($id) {
-        let product = {};
-        product.name = document.getElementById("Pname").value;
-        product.image = document.getElementById("Pimage").files[0];
-        product.desc = document.getElementById("Pdesc").value;
-        product.price = document.getElementById("Pprice").value;
-
-        console.log(product);
+    function showError(obj) {
+        if (obj.errors.image) {
+            var error = '';
+            obj.errors.image.forEach(element => {
+                error += `<li>${element}</li>`
+            });
+            var show1 = $(`<ul>${error}</ul>`)
+            $('#Pimage-error').html(show1);
+            setTimeout(function () {
+                show1.fadeOut(1000);
+            }, 2500);
+        }
+        if (obj.errors.name) {
+            var error = '';
+            obj.errors.name.forEach(element => {
+                error += `<li>${element}</li>`
+            });
+            var show2 = $(`<ul>${error}</ul>`)
+            $('#Pname-error').html(show2);
+            setTimeout(function () {
+                show2.fadeOut(1000);
+            }, 2500);
+        }
+        if (obj.errors.desc) {
+            var error = '';
+            obj.errors.desc.forEach(element => {
+                error += `<li>${element}</li>`
+            });
+            var show3 = $(`<ul>${error}</ul>`)
+            $('#Pdesc-error').html(show3);
+            setTimeout(function () {
+                show3.fadeOut(1000);
+            }, 2500);
+        }
+        if (obj.errors.price) {
+            var error = '';
+            obj.errors.price.forEach(element => {
+                error += `<li>${element}</li>`
+            });
+            var show4 = $(`<ul>${error}</ul>`)
+            $('#Pprice-error').html(show4);
+            setTimeout(function () {
+                show4.fadeOut(1000);
+            }, 2500);
+        }
+        if (obj.errors.quantity) {
+            var error = '';
+            obj.errors.quantity.forEach(element => {
+                error += `<li>${element}</li>`
+            });
+            var show5 = $(`<ul>${error}</ul>`)
+            $('#Pquantity-error').html(show5);
+            setTimeout(function () {
+                show5.fadeOut(1000);
+            }, 2500);
+        }
     }
+    function deleteProduct(id) {
+        let text = "Bạn chắc chắn muốn xóa chứ?";
+        if (confirm(text) == false) {
+            return;
+        }
+        var token = localStorage.getItem('accessToken');
+        $.ajax({
+            url: ROOT + `api/product/` + id,
+            type: 'DELETE',
+            processData: false,
+            contentType: false,
+            headers: {
+                "Authorization": 'Bearer ' + token,
+            },
+            async: false
+        })
+            .done(function (data) {
+                alert('Thành công!')
+                window.location.reload();
+            }).fail(function (data) {
+                var obj = JSON.parse(data['responseText']);
+                showError(obj);
+            })
+
+    }
+    
     function createModal() {
 
         $('#myModal').html(`
@@ -196,23 +309,23 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="formInput">
                     <label for="Pname">Tên sản phẩm</label><br>
                     <input type="text" id="Pname" name="Pname"><br><br>
-                    <div id="Pname-error" style="text-align: left;
-                    padding: 10px 0 0 10px;"></div>
+                    <div id="Pname-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
                     <label for="Pimage">Hình ảnh</label><br><br>
                     <input type='file' onchange="readURL(this);" accept="image/*" id="Pimage" /> <br>
-                    <div id="Pimage-error" style="text-align: left;
-          padding: 10px 0 0 10px;"></div>
+                    <div id="Pimage-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
                     <img id="Pimage-show" src="" style="max-width:180px" alt="your image" /> <br><br>
-                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
-                    <textarea id="Pdesc" name="Pdesc" style="width:100%;height:200px"></textarea><br><br>
-                    <div id="Pdesc-error" style="text-align: left;
-          padding: 10px 0 0 10px;"></div>
+                    
                     <label for="Pprice">Giá</label><br>
                     <input type="text" id="Pprice" name="Pprice"><br>
-                    <div id="Pprice-error" style="text-align: left;
-          padding: 10px 0 0 10px;"></div>
+                    <div id="Pprice-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
                     <br>
-                    
+                    <label for="Pquantity">Số lượng </label><br>
+                    <input type="text" id="Pquantity" name="Pquantity"><br>
+                    <div id="Pquantity-error" style="text-align: left; color:brown;font-weight:bold;padding-left:5px"></div>
+                    <br>
+                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
+                    <textarea id="Pdesc" name="Pdesc" style="width:100%;height:200px"></textarea><br><br>
+                    <div id="Pdesc-error" style="text-align: left; color:brown;font-weight:bold;padding-left:5px"></div><br>
 
                 </div>
                 <div style="text-align: right;"><button class="btn btn-primary" onClick="createProduct()">Lưu</button></div>
@@ -242,14 +355,21 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="formInput">
                     <label for="Pname">Tên sản phẩm</label><br>
                     <input type="text" id="Pname" name="Pname" value="${item.name}"><br><br>
+                    <div id="Pname-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
                     <label for="Pimage">Hình ảnh</label><br><br>
                     <input type='file' onchange="readURL(this);" accept="image/*" id="Pimage"/> <br>
+                    <div id="Pimage-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
                     <img src="${item.image}" style="max-width:180px" alt="your image" /> <br><br>
                     
                     <label for="Pprice">Giá</label><br>
                     <input type="number" id="Pprice" name="Pprice" value="${price}"><br><br>
+                    <div id="Pprice-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
+                    <label for="Pquantity">Số lượng </label><br>
+                    <input type="text" id="Pquantity" name="Pquantity" value="${item.quantity}"><br>
+                    <div id="Pquantity-error" style="text-align: left; color:brown;font-weight:bold;padding-left:5px"></div>
                     <label for="Pdesc">Chi tiết sản phẩm</label><br>
                     <textarea id="Pdesc" name="Pdesc" style="width:100%;height:200px">${item.desc}</textarea><br><br>
+                    <div id="Pdesc-error" style="text-align: left; color:brown;font-weight:bold;padding-left:5px"></div><br>
                     <div style="text-align: right;"><button onclick="updateProduct(${item.id})" class="btn btn-primary">Lưu</button></div>
 
                 </div>
@@ -283,10 +403,13 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     <label for="Pimage">Hình ảnh</label><br><br>
                     <input type='file' onchange="readURL(this);" accept="image/*" /> <br>
                     <img id="Pimage" src="" style="max-width:180px" alt="your image" /> <br><br>
-                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
-                    <input type="text" id="Pdesc" name="Pdesc"><br><br>
+
                     <label for="Pprice">Giá</label><br>
                     <input type="text" id="Pprice" name="Pprice"><br><br>
+                    <label for="Pquantity">Số lượng</label><br>
+                    <input type="text" id="Pquantity" name="Pquantity"><br><br>
+                    <label for="Pdesc">Chi tiết sản phẩm</label><br>
+                    <input type="text" id="Pdesc" name="Pdesc"><br><br>
                     <div style="text-align: right;"><button class="btn btn-primary">Lưu</button></div>
 
                 </div>
@@ -303,7 +426,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <div class="navigation">
                     <span class="menu"></span>
                     <ul class="navig">
-                        <li><a href="">Trang chủ</a></li>
+                        <li><a href="/salemall/client/views/index.html">Trang chủ</a></li>
                     </ul>
                 </div>
                 <div class="header-right">

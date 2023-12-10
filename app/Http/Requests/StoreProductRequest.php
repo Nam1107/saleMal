@@ -30,7 +30,7 @@ class StoreProductRequest extends FormRequest
                                     ->dimensions(Rule::dimensions()->maxWidth(2000)->maxHeight(1500))],
             'price' => ['required','numeric'],
             'desc' => ['required'],
-            'category' => ['required']
+            'quantity' => ['required','numeric']
         ];
     }
 }

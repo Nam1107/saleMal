@@ -54,6 +54,7 @@
   }
   function logout() {
     var token = localStorage.getItem('refreshToken');
+    
     $.ajax({
       url: ROOT + "api/auth/logout",
       type: 'POST',
@@ -67,14 +68,9 @@
       }),
       async: false
     })
-      .done(function (data) {
-        localStorage.removeItem("accessToken");
+    localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         window.location.reload();
-      }).fail(async function (data) {
-        var obj = JSON.parse(data['responseText']);
-        console.log(obj)
-      })
   }
   function getUser() {
     var token = localStorage.getItem('accessToken');

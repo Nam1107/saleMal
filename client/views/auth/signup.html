@@ -15,6 +15,7 @@
   <link href="/salemall/client/css/style.css" rel='stylesheet' type='text/css' />
   <link href="/salemall/client/css/blue.css" rel='stylesheet' type='text/css' />
   <script src="/salemall/client/js/jquery.min.js"></script>
+  <script src="/salemall/client/js/path.js"></script>
   <!---- start-smoth-scrolling---->
   <script type="text/javascript" src="/salemall/client/js/move-top.js"></script>
   <script type="text/javascript" src="/salemall/client/js/easing.js"></script>
@@ -22,60 +23,118 @@
 
 
 <script type="text/javascript">
-  $(function () {
-    $('form').submit(function () {
+  $(document).ready(function () {
 
-      $.post(ROOT + "/server/controllers/users.php", {
-        'create-user': 1,
-        'UserName': $("[name=UserName]").val(),
-        'Email': $("[name=Email]").val(),
-        'Password': $("[name=Password]").val(),
-        're_Pass': $("[name=re_Pass]").val(),
-      }, function (data) {
-        var obj = JSON.parse(data);
-        if (obj.rep == 1) {
-          window.open(ROOT + "/client/auth/login.html", "_self");
-        } else {
-          alert(obj.message)
-        }
+    const user = new FormData();
+    user.append('name', document.getElementById("name").value);
+    user.append('email', document.getElementById("email").value);
+    user.append('password', document.getElementById("password").value);
+    user.append('c_password', document.getElementById("c_password").value);
+    var form = document.getElementById("form");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      $.ajax({
+        url: ROOT + "api/auth/register",
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: user,
+        async: false
       })
-      return false;
+        .done(function (data) {
+          localStorage.setItem('accessToken', data.access_token);
+          localStorage.setItem('refreshToken', data.access_token);
+          window.open(PATH + "views/index.html", "_self");
+        }).fail(async function (data) {
+          var obj = JSON.parse(data['responseText']);
+          if (obj.errors) {
+            showError(obj);
+          }
+        })
     })
-    $('#logo').click(function () {
-      window.open(ROOT + "/client/homepage/index.html", "_self");
-    })
-
   })
+  function showError(obj) {
+    if (obj.errors.name) {
+      var error = '';
+      obj.errors.name.forEach(element => {
+        error += `<li>${element}</li>`
+      });
+      var show1 = $(`<ul>${error}</ul>`)
+      $('#Pname-error').html(show1);
+      setTimeout(function () {
+        show1.fadeOut(1000);
+      }, 2500);
+    }
+    if (obj.errors.email) {
+      var error = '';
+      obj.errors.email.forEach(element => {
+        error += `<li>${element}</li>`
+      });
+      var show2 = $(`<ul>${error}</ul>`)
+      $('#Pemail-error').html(show2);
+      setTimeout(function () {
+        show2.fadeOut(1000);
+      }, 2500);
+    }
+    if (obj.errors.password) {
+      var error = '';
+      obj.errors.password.forEach(element => {
+        error += `<li>${element}</li>`
+      });
+      var show3 = $(`<ul>${error}</ul>`)
+      $('#Ppassword-error').html(show3);
+      setTimeout(function () {
+        show3.fadeOut(1000);
+      }, 2500);
+    }
+    if (obj.errors.c_password) {
+      var error = '';
+      obj.errors.c_password.forEach(element => {
+        error += `<li>${element}</li>`
+      });
+      var show4 = $(`<ul>${error}</ul>`)
+      $('#Pcpassword-error').html(show4);
+      setTimeout(function () {
+        show4.fadeOut(1000);
+      }, 2500);
+    }
+  }
 </script>
 
 <body>
   <div class="full-height">
     <div class="item">
       <div class="text-center" id="logo">
-        <a class="text-title" href="/salemall/client/views/index.html" style="font-size: 40px;background: none;border: none;">SALE
+        <a class="text-title" href="/salemall/client/views/index.html"
+          style="font-size: 40px;background: none;border: none;">SALE
           MALL</a>
       </div>
       <div class="tag-title text-center" style="background-color: wheat;">
         <span class="">Create new account</span>
       </div>
       <div class="tag-title" style="font-size: 15px;">
-        <form method="POST">
+        <form method="POST" id="form">
 
           <div class="mb-3">
             <label class="form-label" style="padding:10px">User Name</label>
-            <input type="text" class="form-control" name="UserName" value="" placeholder="User Name" />
+            <input type="text" class="form-control" name="UserName" id="name" value="" placeholder="User Name" />
+            <div id="Pname-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="mb-3">
             <label class="form-label" style="padding:10px">User Email</label>
-            <input type="email" class="form-control" name="Email" value="" placeholder="User Email" />
+            <input type="email" class="form-control" name="Email" id="email" value="" placeholder="User Email" />
+            <div id="Pemail-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label" style="padding:10px">Password</label>
-            <input type="password" class="form-control" name="Password" value="" placeholder="Password" />
+            <input type="password" class="form-control" name="Password" id="password" value="" placeholder="Password" />
+            <div id="Ppassword-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label" style="padding:10px">Password Confirm</label>
-            <input type="password" class="form-control" name="re_Pass" value="" placeholder="Repeat your password" />
+            <input type="password" class="form-control" name="c_password" id="c_password" value=""
+              placeholder="Repeat your password" />
+            <div id="Pcpassword-error" style="text-align: left;color:brown;font-weight:bold;padding-left:5px"></div>
           </div>
           <div class="atb-2" style="padding:10px">
             <a style="font-style: italic;" href="/salemall/client/views/auth/login.html">Back to Login page</a>

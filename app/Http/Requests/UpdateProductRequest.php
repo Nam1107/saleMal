@@ -33,7 +33,7 @@ class UpdateProductRequest extends FormRequest
                                     ->dimensions(Rule::dimensions()->maxWidth(1000)->maxHeight(500))],
                 'price' => ['required','numeric'],
                 'desc' => ['required'],
-                'category' => ['required']
+                'quantity' => ['required','numeric']
             ];
         }else{
             return [
@@ -42,7 +42,7 @@ class UpdateProductRequest extends FormRequest
                                     ->dimensions(Rule::dimensions()->maxWidth(2000)->maxHeight(1500))],
                 'price' => ['sometimes','required','numeric'],
                 'desc' => ['sometimes','required'],
-                'category' => ['sometimes','required']
+                'quantity' => ['sometimes','required','numeric']
             ];
         }
     }

@@ -27,7 +27,6 @@
     var form = document.getElementById("form");
     var email = document.getElementById("Email");
     var pass = document.getElementById("Password");
-    var button = document.getElementById("btn");
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       // $.post(ROOT + "api/auth/login",
@@ -62,7 +61,6 @@
           window.open(PATH + "views/index.html", "_self");
         }).fail(async function (data) {
           var obj = JSON.parse(data['responseText']);
-          console.log(obj)
           var emailText = '';
           var passwordText = '';
           if (obj.errors.email) {
@@ -124,9 +122,8 @@
           <div class="password-error" style="text-align: left;
           padding: 10px 0 0 10px;"></div>
           <div style="padding-top:10px"><a href="/salemall/client/views/auth/signup.html">Create new user</a></div>
-
           <br>
-          <button type="submit" name="create-user" class="a-btn">Login</button>
+          <button type="submit"  class="a-btn">Login</button>
         </form>
 
       </div>
