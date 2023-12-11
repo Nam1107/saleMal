@@ -177,7 +177,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 window.location.reload();
             }).fail(function (data) {
                 var obj = JSON.parse(data['responseText']);
-                showError(obj);
+                if(obj.error){
+                    showError(obj);
+                    return
+                }
+                alert('Có lỗi xảy ra vui lòng tải lại')
+                window.location.reload();
             })
     }
     function createProduct() {
@@ -208,9 +213,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                     showError(obj);
                     return
                 }
-                alert('Có lỗi xảy ra vui lòng thử lại')
-                console.log(obj)
-                
+                alert('Có lỗi xảy ra vui lòng tải lại')
+                window.location.reload();
             })
 
     }
